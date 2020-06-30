@@ -1,8 +1,16 @@
 'use strict'
 
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const app = require('./app');
 
-//#Conexión a la BD 
+
+//#region Configuración del puerto y servidor
+const port = process.env.PORT || 3000;
+app.listen(port, ()=> console.log(`Escuchando Puerto ${port}`))
+//#endregion
+
+
+//#region Conexión a la BD 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/mean_redSocial', { useMongoClient: true, 
                                                                useNewUrlParser: true, 
