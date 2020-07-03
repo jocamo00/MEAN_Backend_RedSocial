@@ -53,4 +53,31 @@ function saveUser(req, res){
 }
 
 
-module.exports = { home, pruebas, saveUser }
+function loginUser(req, res){
+    let params = req.body; //Recoge los parametros que llegan
+
+    let email = params.email; //Los almacena
+    let password = params.password;
+
+    User.findOne({ email: email}, (err, user) => { //Muestra el usuario con ese email
+        if(err) return res.status(500).send({message: 'Error en la petición'});
+
+        if(user){
+            bcrypt.compare(password, user.password, (err, check) => { //Compara el password que llega con el del usuario
+                if(check){
+                    //devolver datos del usuario
+                    user.password = undefined; //Para eliminar esta propiedad y que no la muestre
+                    return res.status(200).send({user})
+                }else{
+                    return res.status(404).send({message: 'El usuario no se ha podido identificar'});
+                }
+            });
+        }else{
+            return res.status(404).send({message: 'El usuario no se ha podido identificar!!'})
+        }
+    }); 
+}
+
+
+
+module.exports = { home, pruebas, saveUser, loginUser }
