@@ -12,8 +12,7 @@ app.listen(port, ()=> console.log(`Escuchando Puerto ${port}`))
 
 //#region Conexión a la BD 
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost:27017/mean_redSocial', { useMongoClient: true, 
-                                                               useNewUrlParser: true, 
+mongoose.connect('mongodb://localhost:27017/mean_redSocial', { useNewUrlParser: true, 
                                                                useUnifiedTopology: true, 
                                                                useFindAndModify: false, 
                                                                useCreateIndex: true })

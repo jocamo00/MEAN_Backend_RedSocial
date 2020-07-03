@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 //#region Cargar rutas
-
+let user_routes = require('./routes/user');
 
 //#endregion
 
@@ -24,11 +24,8 @@ app.use(bodyParser.json());
 
 
 //#region Rutas
-app.get('/', (req, res) => {
-    res.status(200).send({
-        message: 'Hola mundo desde el servidor de NodeJS'
-    });
-});
+app.use('/api', user_routes);
+
 //#endregion
 
 
