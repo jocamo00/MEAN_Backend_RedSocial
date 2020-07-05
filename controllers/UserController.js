@@ -3,6 +3,7 @@
 const User = require('../models/user');
 const bcrypt = require('bcrypt-nodejs');
 const jwt = require('../services/jwt');
+const mongoosePaginate = require('mongoose-pagination');
 
 
 function home(req, res) {
@@ -104,11 +105,39 @@ function getUser(req, res){
 }
 //#endregion
 
+//#region Mostrar listado de usuarios (con páginación)
+function getUsers(req, res){
+    let identity_user_id = req.user.sub; // Guarda el usuario logeado (lo coje del payload)
+
+    let page = 1;
+    if(req.params.page){
+        page = req.params.page; // Almacena la página
+    }
+
+    let itemsPorPage = 5; // Usuarios que se van a mostrar por página
+
+    // Muestra todos los usuarios, ordenados por id
+    // Se le pasa la pagina actual, el número de items por página
+    // Función de callback que nos devuelve todos los usuarios y el total de registros
+    User.find().sort('_id').paginate(page, itemsPorPage, (err, users, total) => {
+        if(err) return res.status(500).send({message: 'Error en la peticion'});
+
+        if(!users) return res.status(404).send({message: 'No hay usuarios disponibles'});
+
+        return res.status(200).send({ //Devuelve los usuarios con los datos que nos interesan
+            users,
+            total,
+            pages: Math.ceil(total / itemsPorPage) // Número total de páginas redondeado
+        });
+    });
+}
+//#endregion
 
 module.exports = { 
                     home, 
                     pruebas, 
                     saveUser, 
                     loginUser,
-                    getUser 
+                    getUser,
+                    getUsers 
                  }
