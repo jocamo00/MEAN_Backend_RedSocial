@@ -133,11 +133,39 @@ function getUsers(req, res){
 }
 //#endregion
 
+//#region Actualizar datos de usuario
+function updateUser(req, res){
+    let userId = req.params.id; //Guarda el id del usuario
+    let update = req.body; //Guarda las propiedades del usuario
+
+    delete update.password // Elimina la propiedad password
+
+    // Comprobación de que el id sea el del usuario
+    if(userId != req.user.sub){
+        return res.status(500).send({message: 'No tienes permiso para actualizar los datos del usuario'});
+    }
+
+    //Se le pasa el usuario y los datos a actualizar
+    // El parámetro new para que devuelva el objeto ya modificado y no el antiguo
+    User.findByIdAndUpdate(userId, update, {new: true}, (err, userUpdated) => {
+        if(err) return res.status(500).send({message: 'Error en la petición'});
+
+        if(!userUpdated) return res.status(404).send({message: 'No se ha podido actualizar el usuario'});
+
+        //Mostraria el usuario sin actualizar por lo que anteriormente usamos el parámetro new 
+        //para que nos muestre el usuario actualizado
+        return res.status(200).send({user: userUpdated}); 
+    });
+}
+//#endregion
+
+
 module.exports = { 
                     home, 
                     pruebas, 
                     saveUser, 
                     loginUser,
                     getUser,
-                    getUsers 
+                    getUsers,
+                    updateUser 
                  }
